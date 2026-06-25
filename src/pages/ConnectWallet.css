@@ -1,0 +1,33 @@
+.connect-wallet-container {
+  max-width: 400px;
+  margin: 60px auto 30px auto;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.connect-btn {
+  background: #f6851b;
+  color: #fff;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 18px;
+  transition: background 0.2s;
+}
+.connect-btn:hover {
+  background: #e2761b;
+}
+.wallet-info {
+  margin-top: 18px;
+  font-weight: 500;
+  color: #333;
+}
+.wallet-balance {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #555;
+}

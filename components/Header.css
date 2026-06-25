@@ -1,0 +1,52 @@
+/* Header bar styling to match the screenshot
+.header-bar {
+	width: 100%;
+	background: #131a26;
+	color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 18px 24px;
+	box-sizing: border-box;
+}
+
+.header-title {
+	font-size: 1.5rem;
+	font-weight: bold;
+	letter-spacing: 0.5px;
+}
+
+.header-wallet-info {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+
+.wallet-address {
+	font-size: 1rem;
+	font-weight: 500;
+	margin-right: 8px;
+}
+
+.wallet-balance {
+	font-size: 1rem;
+	margin-right: 12px;
+}
+
+.wallet-btn {
+	background: #d1d5db;
+	color: #222;
+	border: none;
+	border-radius: 8px;
+	padding: 8px 22px;
+	font-size: 1.2rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.wallet-btn.connected {
+	background: #6b7280;
+	color: #fff;
+	cursor: default;
+} */
