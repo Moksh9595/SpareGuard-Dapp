@@ -87,7 +87,7 @@ const queryContract = async (method: string, args: any[] = []): Promise<any> => 
 }
 
 // Helper to build, simulate, prepare, sign, and submit write transactions
-const executeContract = async (walletAddress: string, method: string, args: any[] = []): Promise<any> => {
+const executeContract = async (walletAddress: string, method: string, args: any[] = []): Promise<{ data: any, txHash: string }> => {
   // Fetch fresh source account sequence number
   const sourceAccount = await horizonServer.loadAccount(walletAddress)
   const contract = new Contract(CONFIG.contractId)
@@ -138,8 +138,11 @@ const executeContract = async (walletAddress: string, method: string, args: any[
     attempts++
   }
 
-  if ((response.status as any) === 'SUCCESS' && (response as any).returnValue) {
-    return scValToNative((response as any).returnValue)
+  if ((response.status as any) === 'SUCCESS') {
+    return {
+      data: (response as any).returnValue ? scValToNative((response as any).returnValue) : null,
+      txHash: sendResponse.hash
+    }
   }
   
   throw new Error('Transaction execution failed or timed out')
@@ -190,7 +193,16 @@ export const blockchainService = {
     }
 
     try {
-      const rawPart = await executeContract(wallet, 'add_part', [
+      const isRegistered = await blockchainService.isManufacturer(wallet)
+      if (!isRegistered) {
+        try {
+          await executeContract(wallet, 'register_manufacturer', [wallet, manufacturerName])
+        } catch (e) {
+          console.warn('Failed to auto-register manufacturer, continuing...', e)
+        }
+      }
+
+      const rawResult = await executeContract(wallet, 'add_part', [
         wallet,
         part.product_name,
         part.part_name,
@@ -198,7 +210,9 @@ export const blockchainService = {
         part.ipfs_image,
         part.hash
       ])
-      return mapScValToPart(rawPart)
+      const newPart = mapScValToPart(rawResult.data)
+      newPart.txHash = rawResult.txHash
+      return newPart
     } catch (e: any) {
       console.error('On-chain part registration failed, failing back to mock local', e)
       // Fallback
@@ -258,11 +272,12 @@ export const blockchainService = {
     }
 
     try {
-      const isGenuine = await executeContract(verifierWallet, 'verify_part', [
+      const result = await executeContract(verifierWallet, 'verify_part', [
         verifierWallet,
         partCode,
         hash
       ])
+      const isGenuine = result.data
 
       const logs = loadFromStorage<VerificationLog>(LOGS_KEY, INITIAL_VERIFICATION_LOGS)
       const parts = await blockchainService.getParts()
@@ -278,7 +293,8 @@ export const blockchainService = {
         manufacturer_name: matchedPart?.manufacturer_name,
         product_name: matchedPart?.product_name,
         part_name: matchedPart?.part_name,
-        failure_reason: isGenuine ? undefined : 'On-chain verification checksum check rejected.'
+        failure_reason: isGenuine ? undefined : 'On-chain verification checksum check rejected.',
+        txHash: result.txHash
       }
 
       saveToStorage(LOGS_KEY, [log, ...logs])

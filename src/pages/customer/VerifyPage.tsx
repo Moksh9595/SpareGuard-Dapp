@@ -283,7 +283,12 @@ export default function VerifyPage() {
                 <Button 
                   variant="outline" 
                   className="flex-1" 
-                  onClick={() => window.open(`https://stellar.expert/explorer/testnet/account/${account}`, '_blank')}
+                  onClick={() => {
+                    const url = result?.txHash 
+                      ? `https://stellar.expert/explorer/testnet/tx/${result.txHash}`
+                      : `https://stellar.expert/explorer/testnet/account/${account}`
+                    window.open(url, '_blank')
+                  }}
                 >
                   View on Stellar
                 </Button>

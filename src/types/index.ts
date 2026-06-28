@@ -10,6 +10,7 @@ export type PartRecord = {
   created_at: number
   verified_count: number
   status?: 'active' | 'recalled' | 'discontinued'
+  txHash?: string
 }
 
 export type VerificationLog = {
@@ -23,6 +24,7 @@ export type VerificationLog = {
   product_name?: string
   part_name?: string
   failure_reason?: string
+  txHash?: string
 }
 
 export type WalletTransaction = {
