@@ -88,16 +88,7 @@ export default function WalletPage() {
                 <Button
                   variant="gradient"
                   className="w-full py-3.5"
-                  onClick={() => connectWallet('mock')}
-                  isLoading={isConnecting}
-                >
-                  Connect Mock Wallet (Interactive)
-                </Button>
-                <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-wider">Or secure integration</p>
-                <Button
-                  variant="outline"
-                  className="w-full py-3.5 hover:bg-zinc-100 dark:hover:bg-zinc-900"
-                  leftIcon={<Wallet className="w-4 h-4 text-indigo-500" />}
+                  leftIcon={<Wallet className="w-4 h-4 text-white" />}
                   onClick={() => connectWallet('freighter')}
                   isLoading={isConnecting}
                 >

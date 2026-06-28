@@ -192,43 +192,26 @@ export const blockchainService = {
       return newPart
     }
 
-    try {
-      const isRegistered = await blockchainService.isManufacturer(wallet)
-      if (!isRegistered) {
-        try {
-          await executeContract(wallet, 'register_manufacturer', [wallet, manufacturerName])
-        } catch (e) {
-          console.warn('Failed to auto-register manufacturer, continuing...', e)
-        }
+    const isRegistered = await blockchainService.isManufacturer(wallet)
+    if (!isRegistered) {
+      try {
+        await executeContract(wallet, 'register_manufacturer', [wallet, manufacturerName])
+      } catch (e) {
+        console.warn('Failed to auto-register manufacturer, continuing...', e)
       }
-
-      const rawResult = await executeContract(wallet, 'add_part', [
-        wallet,
-        part.product_name,
-        part.part_name,
-        part.part_code,
-        part.ipfs_image,
-        part.hash
-      ])
-      const newPart = mapScValToPart(rawResult.data)
-      newPart.txHash = rawResult.txHash
-      return newPart
-    } catch (e: any) {
-      console.error('On-chain part registration failed, failing back to mock local', e)
-      // Fallback
-      const parts = loadFromStorage<PartRecord>(PARTS_KEY, INITIAL_PARTS)
-      const newPart: PartRecord = {
-        ...part,
-        id: parts.length + 1,
-        manufacturer_wallet: wallet,
-        manufacturer_name: manufacturerName,
-        created_at: Date.now(),
-        verified_count: 0,
-        status: 'active',
-      }
-      saveToStorage(PARTS_KEY, [newPart, ...parts])
-      return newPart
     }
+
+    const rawResult = await executeContract(wallet, 'add_part', [
+      wallet,
+      part.product_name,
+      part.part_name,
+      part.part_code,
+      part.ipfs_image,
+      part.hash
+    ])
+    const newPart = mapScValToPart(rawResult.data)
+    newPart.txHash = rawResult.txHash
+    return newPart
   },
 
   verifyPart: async (
@@ -271,69 +254,33 @@ export const blockchainService = {
       return log
     }
 
-    try {
-      const result = await executeContract(verifierWallet, 'verify_part', [
-        verifierWallet,
-        partCode,
-        hash
-      ])
-      const isGenuine = result.data
+    const result = await executeContract(verifierWallet, 'verify_part', [
+      verifierWallet,
+      partCode,
+      hash
+    ])
+    const isGenuine = result.data
 
-      const logs = loadFromStorage<VerificationLog>(LOGS_KEY, INITIAL_VERIFICATION_LOGS)
-      const parts = await blockchainService.getParts()
-      const matchedPart = parts.find(p => p.part_code === partCode)
+    const logs = loadFromStorage<VerificationLog>(LOGS_KEY, INITIAL_VERIFICATION_LOGS)
+    const parts = await blockchainService.getParts()
+    const matchedPart = parts.find(p => p.part_code === partCode)
 
-      const log: VerificationLog = {
-        id: `V-${1000 + logs.length + 1}`,
-        part_code: partCode,
-        hash: hash,
-        status: isGenuine ? 'genuine' : 'counterfeit',
-        verified_at: Date.now(),
-        verifier_wallet: verifierWallet,
-        manufacturer_name: matchedPart?.manufacturer_name,
-        product_name: matchedPart?.product_name,
-        part_name: matchedPart?.part_name,
-        failure_reason: isGenuine ? undefined : 'On-chain verification checksum check rejected.',
-        txHash: result.txHash
-      }
-
-      saveToStorage(LOGS_KEY, [log, ...logs])
-      return log
-    } catch (e: any) {
-      console.warn('On-chain verification query failed, executing fallback mock verification', e)
-      const parts = loadFromStorage<PartRecord>(PARTS_KEY, INITIAL_PARTS)
-      const logs = loadFromStorage<VerificationLog>(LOGS_KEY, INITIAL_VERIFICATION_LOGS)
-      const matched = parts.find((p) => p.hash === hash && p.part_code === partCode)
-
-      let log: VerificationLog
-      if (matched) {
-        matched.verified_count += 1
-        saveToStorage(PARTS_KEY, parts)
-        log = {
-          id: `V-${1000 + logs.length + 1}`,
-          part_code: partCode,
-          hash: hash,
-          status: 'genuine',
-          verified_at: Date.now(),
-          verifier_wallet: verifierWallet,
-          manufacturer_name: matched.manufacturer_name,
-          product_name: matched.product_name,
-          part_name: matched.part_name,
-        }
-      } else {
-        log = {
-          id: `V-${1000 + logs.length + 1}`,
-          part_code: partCode,
-          hash: hash,
-          status: 'counterfeit',
-          verified_at: Date.now(),
-          verifier_wallet: verifierWallet,
-          failure_reason: 'Cryptographic hash mismatch. Record not found on Stellar ledger.',
-        }
-      }
-      saveToStorage(LOGS_KEY, [log, ...logs])
-      return log
+    const log: VerificationLog = {
+      id: `V-${1000 + logs.length + 1}`,
+      part_code: partCode,
+      hash: hash,
+      status: isGenuine ? 'genuine' : 'counterfeit',
+      verified_at: Date.now(),
+      verifier_wallet: verifierWallet,
+      manufacturer_name: matchedPart?.manufacturer_name,
+      product_name: matchedPart?.product_name,
+      part_name: matchedPart?.part_name,
+      failure_reason: isGenuine ? undefined : 'On-chain verification checksum check rejected.',
+      txHash: result.txHash
     }
+
+    saveToStorage(LOGS_KEY, [log, ...logs])
+    return log
   },
 
   getLogs: async (): Promise<VerificationLog[]> => {
