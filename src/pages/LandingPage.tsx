@@ -265,7 +265,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Real-time Interaction Counter */}
+      {/* Real-time Interaction Counter (Hidden)
       <section className="px-6 py-20 max-w-7xl mx-auto text-center">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl md:text-5xl font-extrabold text-zinc-950 dark:text-white">Live Platform Activity</h2>
@@ -293,6 +293,7 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
+      */}
 
       {/* FAQ Section */}
       <section className="px-6 py-20 max-w-4xl mx-auto border-t border-zinc-200/50 dark:border-zinc-900">
