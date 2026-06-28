@@ -362,25 +362,32 @@ export default function AddPartPage() {
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setSuccessModalOpen(false)}
-              >
-                Add Another
-              </Button>
-              <Button
-                variant="gradient"
-                className="flex-1"
-                onClick={() => {
-                  setSuccessModalOpen(false)
-                  navigate('/manufacturer/products')
-                }}
-              >
-                View Inventory
-              </Button>
-            </div>
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setSuccessModalOpen(false)}
+                >
+                  Add Another
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => window.open(`https://stellar.expert/explorer/testnet/account/${account}`, '_blank')}
+                >
+                  View on Stellar
+                </Button>
+                <Button
+                  variant="gradient"
+                  className="flex-1"
+                  onClick={() => {
+                    setSuccessModalOpen(false)
+                    navigate('/manufacturer/products')
+                  }}
+                >
+                  View Inventory
+                </Button>
+              </div>
           </div>
         )}
       </Modal>
