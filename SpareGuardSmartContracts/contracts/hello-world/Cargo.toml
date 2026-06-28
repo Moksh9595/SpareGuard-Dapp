@@ -1,0 +1,16 @@
+[package]
+name = "spare-guard"
+version = "1.0.0"
+edition = "2021"
+publish = false
+description = "SpareGuard - Spare Part Authentication Smart Contract on Stellar/Soroban"
+
+[lib]
+crate-type = ["lib", "cdylib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[dev-dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
