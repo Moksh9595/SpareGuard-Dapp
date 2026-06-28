@@ -1,0 +1,55 @@
+name: SpareGuard CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  frontend-ci:
+    name: Frontend Build & Type Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install Dependencies
+      run: npm ci || npm install
+      
+    - name: Build Frontend
+      run: npm run build
+
+  smart-contract-ci:
+    name: Smart Contract Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./SpareGuardSmartContracts
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown
+        
+    - name: Cache Rust dependencies
+      uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: ./SpareGuardSmartContracts -> target
+        
+    - name: Build Smart Contract
+      run: cargo build --target wasm32-unknown-unknown --release
+      working-directory: ./SpareGuardSmartContracts/contracts/hello-world
+      
+    - name: Run Smart Contract Tests
+      run: cargo test
+      working-directory: ./SpareGuardSmartContracts/contracts/hello-world
