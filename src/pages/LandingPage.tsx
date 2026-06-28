@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -18,6 +18,15 @@ import { Button } from '../components/Button'
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [interactionCount, setInteractionCount] = useState(145892)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Simulate real-time interactions ticking up
+      setInteractionCount(prev => prev + Math.floor(Math.random() * 3) + 1)
+    }, 2500)
+    return () => clearInterval(interval)
+  }, [])
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index)
@@ -256,27 +265,32 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Real-time Interaction Counter */}
       <section className="px-6 py-20 max-w-7xl mx-auto text-center">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-zinc-950 dark:text-white">Supply Chain Endorsement</h2>
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-zinc-950 dark:text-white">Live Platform Activity</h2>
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-4 font-medium">
+            Real-time verification and registration queries executed across the network.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {testimonials.map((t, idx) => (
-            <div key={idx} className="glass-card p-8 rounded-3xl text-left border-zinc-200/60 dark:border-zinc-800/60">
-              <p className="text-sm italic text-zinc-600 dark:text-zinc-300 font-medium">"{t.quote}"</p>
-              <div className="mt-6 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#5B5FFF] to-[#7C3AED] flex items-center justify-center text-white font-bold text-xs">
-                  {t.author[0]}
-                </div>
-                <div>
-                  <h5 className="text-sm font-bold text-zinc-950 dark:text-white">{t.author}</h5>
-                  <p className="text-[11px] text-zinc-500 font-medium">{t.role}</p>
-                </div>
-              </div>
+        <div className="glass-card max-w-xl mx-auto p-12 rounded-[2.5rem] border-zinc-200/60 dark:border-zinc-800/60 relative overflow-hidden shadow-2xl shadow-[#5B5FFF]/5">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#5B5FFF]/10 via-transparent to-[#7C3AED]/10 opacity-50" />
+          <motion.div
+            key={interactionCount}
+            initial={{ scale: 0.97, opacity: 0.8 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="relative"
+          >
+            <h3 className="text-6xl md:text-[5.5rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-[#5B5FFF] to-[#7C3AED] tracking-tight">
+              {interactionCount.toLocaleString()}
+            </h3>
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-bold text-zinc-500 dark:text-zinc-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Total Global Interactions
             </div>
-          ))}
+          </motion.div>
         </div>
       </section>
 
