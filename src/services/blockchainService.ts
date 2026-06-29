@@ -6,7 +6,8 @@ import {
   Account, 
   nativeToScVal, 
   scValToNative, 
-  TimeoutInfinite
+  TimeoutInfinite,
+  Memo
 } from '@stellar/stellar-sdk'
 import { signTransaction } from '@stellar/freighter-api'
 import { CONFIG } from '../config'
@@ -102,6 +103,7 @@ const executeContract = async (walletAddress: string, method: string, args: any[
     fee: '100',
     networkPassphrase: CONFIG.networkPassphrase
   })
+    .addMemo(Memo.text('SpareGuard Auth'))
     .addOperation(op)
     .setTimeout(300) // 5 minutes to allow user time to approve in wallet
     .build()
@@ -132,7 +134,7 @@ const executeContract = async (walletAddress: string, method: string, args: any[
   // Poll transaction status from ledger
   let response = await rpcServer.getTransaction(sendResponse.hash)
   let attempts = 0
-  while ((response.status as any) === 'PENDING' && attempts < 30) {
+  while (['PENDING', 'NOT_FOUND'].includes(response.status as any) && attempts < 30) {
     await new Promise((resolve) => setTimeout(resolve, 2000)) // wait 2 seconds between polls
     response = await rpcServer.getTransaction(sendResponse.hash)
     attempts++

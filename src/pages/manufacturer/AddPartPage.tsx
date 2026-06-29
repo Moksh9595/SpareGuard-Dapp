@@ -348,14 +348,26 @@ export default function AddPartPage() {
             {/* Block Transaction Data Box */}
             <div className="glass-card rounded-2xl p-4 text-left border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-950/60 space-y-3">
               <div className="flex justify-between text-xs border-b border-zinc-200 dark:border-zinc-800 pb-2">
-                <span className="font-semibold text-zinc-500">Operation Hash</span>
+                <span className="font-semibold text-zinc-500">Transaction Hash</span>
                 <span className="font-mono text-zinc-800 dark:text-zinc-300 font-bold truncate max-w-[60%]">
-                  {registeredResult.hash.substring(0, 16)}...
+                  {registeredResult.txHash 
+                    ? `${registeredResult.txHash.substring(0, 16)}...` 
+                    : `${registeredResult.hash.substring(0, 16)}...`}
                 </span>
               </div>
               <div className="flex justify-between text-xs border-b border-zinc-200 dark:border-zinc-800 pb-2">
                 <span className="font-semibold text-zinc-500">Part Code</span>
                 <span className="font-bold text-zinc-800 dark:text-zinc-200">{registeredResult.part_code}</span>
+              </div>
+              <div className="flex justify-between text-xs border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                <span className="font-semibold text-zinc-500">Network Status</span>
+                <span className="font-bold text-emerald-500 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" /> Success
+                </span>
+              </div>
+              <div className="flex justify-between text-xs border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                <span className="font-semibold text-zinc-500">Logical Memo</span>
+                <span className="font-mono text-zinc-600 dark:text-zinc-400">SpareGuard Auth</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="font-semibold text-zinc-500">Ledger Gas Fee</span>
