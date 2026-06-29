@@ -103,7 +103,7 @@ const executeContract = async (walletAddress: string, method: string, args: any[
     networkPassphrase: CONFIG.networkPassphrase
   })
     .addOperation(op)
-    .setTimeout(30)
+    .setTimeout(300) // 5 minutes to allow user time to approve in wallet
     .build()
 
   // Simulate to calculate footprint & resource fees
@@ -132,8 +132,8 @@ const executeContract = async (walletAddress: string, method: string, args: any[
   // Poll transaction status from ledger
   let response = await rpcServer.getTransaction(sendResponse.hash)
   let attempts = 0
-  while ((response.status as any) === 'PENDING' && attempts < 15) {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  while ((response.status as any) === 'PENDING' && attempts < 30) {
+    await new Promise((resolve) => setTimeout(resolve, 2000)) // wait 2 seconds between polls
     response = await rpcServer.getTransaction(sendResponse.hash)
     attempts++
   }
