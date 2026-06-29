@@ -76,9 +76,11 @@ export default function VerifyPage() {
         setIsVerifying(false)
       }, 300)
 
-    } catch (err) {
+    } catch (err: any) {
       clearInterval(interval)
       setIsVerifying(false)
+      console.error(err)
+      toast.error(err.message || 'Verification query failed')
     }
   }
 

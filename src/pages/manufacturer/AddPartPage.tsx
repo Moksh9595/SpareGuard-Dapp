@@ -109,6 +109,7 @@ export default function AddPartPage() {
       }
     } catch (err: any) {
       console.error(err)
+      toast.error(err.message || 'Transaction failed or was rejected')
     }
   }
 

@@ -61,7 +61,7 @@ const mapScValToPart = (rawPart: any): PartRecord => {
 // Helper to execute read-only calls via simulation
 const queryContract = async (method: string, args: any[] = []): Promise<any> => {
   // Use a dummy account for read-only simulations
-  const dummyPublicKey = 'GD3A5TSTELLARAUTHENTICATEPARTDAPPKEY777REPRESENTATIVEADDRESS'
+  const dummyPublicKey = 'GCPHVX6WVGR2DRJJ2SLUI77ZJECS7LSS2VFRADFJAEQN4755EWPW5GZE'
   const source = new Account(dummyPublicKey, '0')
   const contract = new Contract(CONFIG.contractId)
   
