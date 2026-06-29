@@ -89,7 +89,9 @@ test test::test_5_duplicate_part_code_rejected ... ok
 test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
 
 
+## CI/CD pipeline setup :
 
+<img width="1918" height="742" alt="image" src="https://github.com/user-attachments/assets/be0f4d2e-90c5-4b66-9a17-1367084b7c60" />
 
 
 
