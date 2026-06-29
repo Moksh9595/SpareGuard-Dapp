@@ -60,10 +60,10 @@ const mapScValToPart = (rawPart: any): PartRecord => {
 }
 
 // Helper to execute read-only calls via simulation
-const queryContract = async (method: string, args: any[] = []): Promise<any> => {
-  // Use a dummy account for read-only simulations
+const queryContract = async (method: string, args: any[] = [], caller?: string): Promise<any> => {
+  // Use caller if provided, otherwise fallback to dummy account for read-only simulations
   const dummyPublicKey = 'GCPHVX6WVGR2DRJJ2SLUI77ZJECS7LSS2VFRADFJAEQN4755EWPW5GZE'
-  const source = new Account(dummyPublicKey, '0')
+  const source = new Account(caller || dummyPublicKey, '0')
   const contract = new Contract(CONFIG.contractId)
   
   const op = contract.call(method, ...args.map(val => {
@@ -100,7 +100,7 @@ const executeContract = async (walletAddress: string, method: string, args: any[
   }))
   
   const tx = new TransactionBuilder(sourceAccount, {
-    fee: '100',
+    fee: '10000', // 10,000 stroops base fee buffer to prevent dropped transactions
     networkPassphrase: CONFIG.networkPassphrase
   })
     .addMemo(Memo.text('SpareGuard Auth'))
@@ -116,7 +116,7 @@ const executeContract = async (walletAddress: string, method: string, args: any[
 
   // Assemble footprint into tx
   const preparedTx = await rpcServer.prepareTransaction(tx)
-  
+
   // Request user signature via Freighter wallet extension
   const signedTxResult = await signTransaction(preparedTx.toXDR(), {
     network: CONFIG.network.toUpperCase(),
@@ -147,7 +147,7 @@ const executeContract = async (walletAddress: string, method: string, args: any[
     }
   }
   
-  throw new Error('Transaction execution failed or timed out')
+  throw new Error(`Transaction failed on ledger. Status: ${response.status}. Details: ${(response as any).resultMetaXdr || 'None'}`)
 }
 
 export const blockchainService = {
@@ -196,11 +196,7 @@ export const blockchainService = {
 
     const isRegistered = await blockchainService.isManufacturer(wallet)
     if (!isRegistered) {
-      try {
-        await executeContract(wallet, 'register_manufacturer', [wallet, manufacturerName])
-      } catch (e) {
-        console.warn('Failed to auto-register manufacturer, continuing...', e)
-      }
+      await executeContract(wallet, 'register_manufacturer', [wallet, manufacturerName])
     }
 
     const rawResult = await executeContract(wallet, 'add_part', [
@@ -314,7 +310,7 @@ export const blockchainService = {
       return true
     }
     try {
-      const res = await queryContract('is_manufacturer', [walletAddress])
+      const res = await queryContract('is_manufacturer', [walletAddress], walletAddress)
       return !!res
     } catch {
       return false
