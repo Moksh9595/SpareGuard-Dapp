@@ -196,7 +196,15 @@ export const blockchainService = {
 
     const isRegistered = await blockchainService.isManufacturer(wallet)
     if (!isRegistered) {
-      await executeContract(wallet, 'register_manufacturer', [wallet, manufacturerName])
+      try {
+        await executeContract(wallet, 'register_manufacturer', [wallet, manufacturerName])
+      } catch (e: any) {
+        // If the contract says they are already registered (Contract Error 2), 
+        // ignore it. This handles cases where the read-only RPC cache is stale.
+        if (!e.message || !e.message.includes('Error(Contract, #2)')) {
+          throw e
+        }
+      }
     }
 
     const rawResult = await executeContract(wallet, 'add_part', [
@@ -312,7 +320,8 @@ export const blockchainService = {
     try {
       const res = await queryContract('is_manufacturer', [walletAddress], walletAddress)
       return !!res
-    } catch {
+    } catch (err) {
+      console.error('isManufacturer query failed:', err)
       return false
     }
   },
