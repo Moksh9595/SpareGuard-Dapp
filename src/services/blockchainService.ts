@@ -103,7 +103,6 @@ const executeContract = async (walletAddress: string, method: string, args: any[
     fee: '10000', // 10,000 stroops base fee buffer to prevent dropped transactions
     networkPassphrase: CONFIG.networkPassphrase
   })
-    .addMemo(Memo.text('SpareGuard Auth'))
     .addOperation(op)
     .setTimeout(300) // 5 minutes to allow user time to approve in wallet
     .build()
@@ -111,7 +110,8 @@ const executeContract = async (walletAddress: string, method: string, args: any[
   // Simulate to calculate footprint & resource fees
   const sim = await rpcServer.simulateTransaction(tx)
   if (!rpc.Api.isSimulationSuccess(sim)) {
-    throw new Error(`Simulation failed: ${(sim as any).result?.retval ? scValToNative((sim as any).result.retval) : 'Unknown error'}`)
+    const errorMsg = (sim as any).error || ((sim as any).result?.retval ? scValToNative((sim as any).result.retval) : 'Unknown error')
+    throw new Error(`Simulation failed: ${errorMsg}`)
   }
 
   // Assemble footprint into tx
