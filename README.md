@@ -76,6 +76,9 @@ contract ID : 'CCTCP3IDLYLZN7BDGZB2L64ADV3GAJURF6I443CALD3LQIEWRHBAOBKC'
 
  ## 🧪 Test Passing Results :
 
+ <img width="1478" height="738" alt="image" src="https://github.com/user-attachments/assets/1196198c-e648-43c5-bc73-69d2112678ba" />
+
+
    Finished `test` profile [unoptimized + debuginfo] target(s) in 32.72s
      Running unittests src\lib.rs (target\debug\deps\spare_guard-320e58879d216ebd.exe)
 
