@@ -67,6 +67,9 @@ Manufacturers can manage and view all registered spare parts through an intuitiv
 
 contract ID : 'CCTCP3IDLYLZN7BDGZB2L64ADV3GAJURF6I443CALD3LQIEWRHBAOBKC'
 
+<img width="1918" height="903" alt="image" src="https://github.com/user-attachments/assets/735b4723-cb45-4ee1-a331-bd63013a2eb4" />
+
+
 
  ## 🧪 Test Passing Results :
 
